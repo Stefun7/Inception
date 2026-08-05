@@ -2,8 +2,11 @@ NAME = inception
 
 COMPOSE_FILE = srcs/docker-compose.yml
 
-# DATA_PATH = /home/$(USER)/data
-DATA_PATH = $(HOME)/data
+# For Linux
+DATA_PATH = /home/$(USER)/data
+
+# For XOS
+# DATA_PATH = $(HOME)/data
 
 all: build up
 
@@ -18,7 +21,7 @@ build:
 # Start all containers
 up:
 	@echo "Starting containers..."
-	# Start containers in detached mode (-d)
+	# Start containers in detached mode
 	@cd srcs/ && docker-compose up
 
 # Stop all containers
