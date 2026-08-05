@@ -2,7 +2,6 @@
 
 echo "🚀 Lancement de l'installation de WordPress..."
 
-# S'assure que la variables requises ne soient pas vides (-z)
 if [ -z "$SQL_DATABASE" ] || [ -z "$SQL_USER" ] || \
 	[ -z "$SQL_PASSWORD" ] || [ -z "$DOMAIN_NAME" ] || \
 	[ -z "$WP_ADMIN_USER" ] || [ -z "$WP_ADMIN_PASSWORD" ] || \
@@ -12,11 +11,9 @@ if [ -z "$SQL_DATABASE" ] || [ -z "$SQL_USER" ] || \
 	exit 1
 fi
 
-# Temps d'attente pour s'assurer que MariaDB est bien lancé
 echo "🔗 Connexion à la base de données..."
 sleep 10
 
-# Vérifie que la base de données est prête à accepter les connexions
 MAX_RETRIES=30
 COUNT=0
 while [ $COUNT -lt $MAX_RETRIES ]; do
@@ -34,7 +31,6 @@ if [ $COUNT -eq $MAX_RETRIES ]; then
 		exit 1
 fi
 
-# Vérifie si WordPress est déjà installé (pour éviter une double initialisation)
 if [ ! -f /var/www/html/wp-config.php ]; then
 	echo "📥 Téléchargement de WordPress..."
 	wp core download --version=6.0 --locale=fr_FR --allow-root
@@ -66,14 +62,11 @@ else
 	echo "ℹ️ WordPress est déjà installé. Aucun changement effectué."
 fi
 
-# Création du dossier requis par PHP-FPM si besoin
 mkdir -p /run/php
 
-# Droits d'accès pour NGINX/PHP
 chown -R www-data:www-data /var/www/html
 chmod -R 755 /var/www/html
 
-# Lancement de PHP-FPM en avant-plan (pour que le container reste actif)
 echo "🔥 Démarrage de PHP-FPM…"
 sleep 2
 exec php-fpm8.2 -F

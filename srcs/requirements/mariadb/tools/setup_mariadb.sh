@@ -2,17 +2,15 @@
 
 echo "🚀 Démarrage de l'initialisation de MariaDB..."
 
-# S'assure que la variables requises ne soient pas vides (-z)
 if [ -z "$SQL_ROOT_PASSWORD" ] || [ -z "$SQL_DATABASE" ] || [ -z "$SQL_USER" ] || [ -z "$SQL_PASSWORD" ]; then
     echo "❌ Variables d'environnement requises manquantes."
     exit 1
 fi
 
-# Lancer le service MariaDB
 service mariadb start
 
 echo "🔗 Connexion à la base de données..."
-# Attendre que MariaDB soit prêt à accepter des connexions
+
 MAX_RETRIES=30
 COUNT=0
 while [ $COUNT -lt $MAX_RETRIES ]; do
@@ -32,13 +30,13 @@ fi
 
 echo "✅ MariaDB est prêt. Création de la base de données et des utilisateurs..."
 
-# Définir le mot de passe root
+# root psw here, depending on the machine can be little "childish"
 mysql -u root << EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${SQL_ROOT_PASSWORD}';
 FLUSH PRIVILEGES;
 EOF
 
-# Utiliser le mot de passe root pour la configuration suivante
+# root for next connexion
 mysql -u root -p"${SQL_ROOT_PASSWORD}" << EOF
 CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\`;
 CREATE USER IF NOT EXISTS '${SQL_USER}'@'%' IDENTIFIED BY '${SQL_PASSWORD}';
@@ -48,11 +46,9 @@ EOF
 
 echo "🎉 Configuration de la base de données terminée avec succès !"
 
-# Arrêt de MariaDB pour un redémarrage en mode production
 echo "🔥 Démarrage de MariaDB en avant-plan..."
 mysqladmin -u root -p"${SQL_ROOT_PASSWORD}" shutdown
 
 sleep 2
 
-# Démarrer MariaDB en avant-plan (foreground)
 exec mysqld_safe
