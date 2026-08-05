@@ -2,11 +2,8 @@ NAME = inception
 
 COMPOSE_FILE = srcs/docker-compose.yml
 
-# For Linux
-DATA_PATH = /home/$(USER)/data
-
-# For XOS
-# DATA_PATH = $(HOME)/data
+# DATA_PATH = /home/$(USER)/data
+DATA_PATH = $(HOME)/data
 
 all: build up
 
@@ -46,7 +43,7 @@ fclean: clean
 	# Remove everything Docker-related
 	@docker system prune -af --volumes
 
-# Rebuild everything
+# Rebuild everything from scratch
 re: fclean all
 
 # Show container logs
@@ -57,4 +54,5 @@ logs:
 status:
 	@docker-compose -f $(COMPOSE_FILE) ps
 
+# Declare phony targets (not actual files)
 .PHONY: all build up down clean fclean re logs status

@@ -52,7 +52,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${SQL_DATA_PATH}   # 📍 Point de montage sur l’hôte
+      device: ${SQL_DATA_PATH}   # 📍 Point de montage sur l’hôte Linux here
 
   wordpress_data:
     driver: local
